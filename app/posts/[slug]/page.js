@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import PostTranslator from "@/components/PostTranslator";
 import { getPostBySlug, getPosts } from "@/lib/posts";
 
 export function generateStaticParams() {
@@ -31,27 +32,8 @@ export default async function PostPage({ params }) {
           ← Back to all posts
         </Link>
 
-        <article className="post-article">
-          <p className="eyebrow">{post.topic}</p>
-          <h1>{post.title}</h1>
-          <div className="post-meta-row">
-            <time dateTime={post.date}>{formatDate(post.date)}</time>
-            <span>{post.readTime} read</span>
-          </div>
-
-          {post.content.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
-          ))}
-        </article>
+        <PostTranslator post={post} />
       </div>
     </main>
   );
-}
-
-function formatDate(dateString) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(dateString));
 }

@@ -358,6 +358,65 @@ p {
   margin-bottom: 1rem;
 }
 
+.translator-controls {
+  border: 1px solid var(--border);
+  background: #f8fcf6;
+  border-radius: 12px;
+  padding: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.translator-controls label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.translator-row {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.translator-row select {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.58rem 0.7rem;
+  font: inherit;
+  background: var(--surface);
+}
+
+.translator-row button {
+  border: 0;
+  border-radius: 10px;
+  background: var(--brand);
+  color: #fff;
+  font-weight: 700;
+  padding: 0.58rem 0.85rem;
+  cursor: pointer;
+}
+
+.translator-row button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.translator-row .ghost-btn {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.translator-note {
+  color: var(--brand);
+  margin: 0.6rem 0 0;
+}
+
+.translator-error {
+  color: #9f2d1f;
+  margin: 0.5rem 0 0;
+}
+
 .sr-only {
   border: 0;
   clip: rect(0, 0, 0, 0);
