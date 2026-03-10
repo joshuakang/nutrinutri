@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NutriNotes | Personal Blog</title>
+    <meta
+      name="description"
+      content="Personal nutrition and lifestyle blog with evidence-based articles, recipes, and wellness tips."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Manrope:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a class="brand" href="#">NutriNotes</a>
+        <button class="menu-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+        <nav id="site-nav" class="site-nav">
+          <a href="#latest">Latest</a>
+          <a href="#topics">Topics</a>
+          <a href="#about">About</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-grid">
+          <div>
+            <p class="eyebrow">Evidence-Based Wellness</p>
+            <h1>Your Personal Nutrition Blog, Built to Teach and Inspire</h1>
+            <p class="hero-copy">
+              I translate nutrition science into practical habits you can actually use. Explore articles on
+              healthy eating, weight management, and lifestyle medicine.
+            </p>
+            <div class="hero-cta">
+              <a class="btn btn-primary" href="#latest">Read Latest Posts</a>
+              <a class="btn btn-secondary" href="#about">Meet the Author</a>
+            </div>
+          </div>
+          <aside class="hero-highlight">
+            <p class="label">Featured Topic</p>
+            <h2>What to Eat for Sustainable Fat Loss</h2>
+            <p>
+              A realistic 8-step framework to improve satiety, protect muscle, and lose body fat without
+              extreme dieting.
+            </p>
+            <a href="#latest">Open article</a>
+          </aside>
+        </div>
+      </section>
+
+      <section id="topics" class="topics-section">
+        <div class="container">
+          <h2 class="section-title">Browse By Topic</h2>
+          <div id="topic-filters" class="topic-filters" aria-label="Topic filters"></div>
+        </div>
+      </section>
+
+      <section id="latest" class="posts-section">
+        <div class="container">
+          <div class="section-head">
+            <h2 class="section-title">Latest Posts</h2>
+            <label class="search-wrap" for="search-input">
+              <span class="sr-only">Search posts</span>
+              <input id="search-input" type="search" placeholder="Search posts..." />
+            </label>
+          </div>
+          <div id="posts-grid" class="posts-grid"></div>
+          <p id="empty-state" class="empty-state" hidden>No posts match your filter. Try another topic.</p>
+        </div>
+      </section>
+
+      <section id="about" class="about-section">
+        <div class="container about-grid">
+          <div>
+            <h2 class="section-title">About Me</h2>
+            <p>
+              I’m a registered dietitian sharing practical nutrition guidance grounded in current research.
+              This blog is where I publish evidence summaries, myth checks, and simple food strategies.
+            </p>
+            <p>
+              Replace this section with your own bio, credentials, and social links to personalize the site.
+            </p>
+          </div>
+          <div class="about-card">
+            <h3>Popular Categories</h3>
+            <ul>
+              <li>Weight Management</li>
+              <li>Sports Nutrition</li>
+              <li>Supplements</li>
+              <li>Meal Planning</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" class="newsletter-section">
+        <div class="container newsletter-wrap">
+          <h2>Get New Articles by Email</h2>
+          <p>Keep this as a newsletter signup placeholder or connect it to your preferred email tool.</p>
+          <form class="newsletter-form" action="#" method="post">
+            <input type="email" placeholder="you@example.com" required />
+            <button type="submit">Subscribe</button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-wrap">
+        <p>© <span id="year"></span> NutriNotes. All rights reserved.</p>
+        <p>Built for your personal publishing workflow.</p>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
