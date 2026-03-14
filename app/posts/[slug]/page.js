@@ -32,7 +32,7 @@ export default async function PostPage({ params }) {
           ← Back to all posts
         </Link>
 
-        <PostTranslator post={post} />
+        <PostTranslator post={post} postSlug={slug} />
       </div>
     </main>
   );

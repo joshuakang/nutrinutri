@@ -1,104 +1,115 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import BilingualParagraphRenderer from "@/components/BilingualParagraphRenderer";
+import TranslationToolbar from "@/components/TranslationToolbar";
+import {
+  DEFAULT_TARGET_LANGUAGE,
+  normalizeParagraphs,
+  SUPPORTED_TRANSLATION_LANGUAGES,
+} from "@/lib/translation";
 
-const LANGUAGES = [
-  { label: "Traditional Chinese", value: "Traditional Chinese" },
-  { label: "Simplified Chinese", value: "Simplified Chinese" },
-  { label: "Japanese", value: "Japanese" },
-  { label: "Korean", value: "Korean" },
-  { label: "Spanish", value: "Spanish" },
-  { label: "French", value: "French" },
-  { label: "German", value: "German" },
-  { label: "Arabic", value: "Arabic" },
-];
+export default function PostTranslator({ post, postSlug }) {
+  const originalParagraphs = useMemo(() => normalizeParagraphs(post.content), [post.content]);
 
-export default function PostTranslator({ post }) {
-  const [targetLanguage, setTargetLanguage] = useState("Traditional Chinese");
-  const [translated, setTranslated] = useState(null);
+  const [targetLanguage, setTargetLanguage] = useState(DEFAULT_TARGET_LANGUAGE);
+  const [mode, setMode] = useState("original");
+  const [translationPairs, setTranslationPairs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState("");
   const [error, setError] = useState("");
 
-  const visiblePost = translated ?? post;
-  const hasTranslation = translated !== null;
+  const hasTranslation = translationPairs.length > 0;
 
-  const translatedDate = useMemo(() => formatDate(post.date), [post.date]);
+  function handleModeChange(nextMode) {
+    if (!hasTranslation && nextMode !== "original") return;
+    setMode(nextMode);
+  }
 
-  async function handleTranslate() {
+  async function requestTranslation() {
+    if (isLoading) return;
+    if (!originalParagraphs.length) {
+      setError("No translatable article content was found for this post.");
+      setStatus("");
+      return;
+    }
+
     setIsLoading(true);
     setError("");
+    setStatus("Translating article...");
 
     try {
       const response = await fetch("/api/translate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          postSlug,
           targetLanguage,
-          title: post.title,
-          topic: post.topic,
-          content: post.content,
+          content: originalParagraphs,
         }),
       });
 
+      const payload = await response.json().catch(() => ({}));
       if (!response.ok) {
-        const payload = await response.json().catch(() => ({}));
         throw new Error(payload.error || "Translation request failed.");
       }
 
-      const payload = await response.json();
-      setTranslated(payload.translation);
+      const pairs = Array.isArray(payload.paragraphs) ? payload.paragraphs : [];
+      if (!pairs.length) {
+        throw new Error("No translated content was returned.");
+      }
+
+      setTranslationPairs(pairs);
+      setMode("bilingual");
+      const selectedLabel =
+        SUPPORTED_TRANSLATION_LANGUAGES.find((item) => item.value === targetLanguage)?.label ||
+        targetLanguage;
+      setStatus(
+        payload.fromCache
+          ? `Cached translation loaded in ${selectedLabel}.`
+          : `Translation ready in ${selectedLabel}.`
+      );
     } catch (requestError) {
-      setError(requestError.message || "Translation failed. Try again.");
+      setStatus("");
+      setError(requestError.message || "Translation failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
   }
 
-  function clearTranslation() {
-    setTranslated(null);
-    setError("");
-  }
-
   return (
     <article className="post-article">
-      <div className="translator-controls">
-        <label htmlFor="lang-select">Translate this post</label>
-        <div className="translator-row">
-          <select
-            id="lang-select"
-            value={targetLanguage}
-            onChange={(event) => setTargetLanguage(event.target.value)}
-            disabled={isLoading}
-          >
-            {LANGUAGES.map((language) => (
-              <option key={language.value} value={language.value}>
-                {language.label}
-              </option>
-            ))}
-          </select>
-          <button type="button" onClick={handleTranslate} disabled={isLoading}>
-            {isLoading ? "Translating..." : "Translate with AI"}
-          </button>
-          {hasTranslation ? (
-            <button type="button" className="ghost-btn" onClick={clearTranslation} disabled={isLoading}>
-              Show Original
-            </button>
-          ) : null}
-        </div>
-        {hasTranslation ? <p className="translator-note">Showing AI translation: {targetLanguage}</p> : null}
-        {error ? <p className="translator-error">{error}</p> : null}
-      </div>
+      <TranslationToolbar
+        targetLanguage={targetLanguage}
+        onChangeLanguage={(nextLanguage) => {
+          setTargetLanguage(nextLanguage);
+          setTranslationPairs([]);
+          setMode("original");
+          setStatus("");
+          setError("");
+        }}
+        mode={mode}
+        onChangeMode={handleModeChange}
+        onTranslate={requestTranslation}
+        onRetry={requestTranslation}
+        isLoading={isLoading}
+        hasTranslation={hasTranslation}
+        status={status}
+        error={error}
+      />
 
-      <p className="eyebrow">{visiblePost.topic}</p>
-      <h1>{visiblePost.title}</h1>
+      <p className="eyebrow">{post.topic}</p>
+      <h1>{post.title}</h1>
       <div className="post-meta-row">
-        <time dateTime={post.date}>{translatedDate}</time>
+        <time dateTime={post.date}>{formatDate(post.date)}</time>
         <span>{post.readTime} read</span>
       </div>
 
-      {visiblePost.content.map((paragraph, index) => (
-        <p key={`${index}-${paragraph.slice(0, 24)}`}>{paragraph}</p>
-      ))}
+      <BilingualParagraphRenderer
+        mode={mode}
+        paragraphPairs={translationPairs}
+        originalParagraphs={originalParagraphs}
+      />
     </article>
   );
 }
